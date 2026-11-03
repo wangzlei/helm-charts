@@ -510,6 +510,14 @@ manager:
       repositoryDomain: public.ecr.aws/aws-observability
       repository: adot-autoinstrumentation-node
       tag: v0.13.0
+  # How Java, Node.js, Python and .NET are injected into Linux pods:
+  #   old      - language environment variables (JAVA_TOOL_OPTIONS, NODE_OPTIONS, PYTHONPATH, CORECLR_*), the default
+  #   injector - all four through the OpenTelemetry Injector (LD_PRELOAD), which carries the ADOT start-up guard:
+  #              when the SDK keeps a container from starting, its next start runs without the SDK
+  #   a comma-separated list of the languages that use the injector, e.g. "python" or "python,nodejs"
+  # The injector is used only with the default autoInstrumentationImage of a language; Windows pods and custom
+  # images keep the old injection.
+  instrumentationInjectionMode: old
   applicationSignals:
     autoMonitor:
       # monitorAllServices: true; Defaults to true for regions where AppSignals is supported, false otherwise

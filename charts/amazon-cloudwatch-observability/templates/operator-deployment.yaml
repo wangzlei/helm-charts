@@ -42,6 +42,15 @@ spec:
         - "--auto-instrumentation-nodejs-image={{ template "auto-instrumentation-nodejs.image" . }}"
         - "--target-allocator-image={{ template "target-allocator.image" (merge .Values.agent.prometheus.targetAllocator.image (dict "region" $.Values.region)) }}"
         - "--feature-gates=operator.autoinstrumentation.multiinstrumentation,operator.autoinstrumentation.multiinstrumentation.skipcontainervalidation"
+        {{- with .Values.manager.instrumentationInjectionMode }}
+        {{- $mode := . | toString | lower | trim }}
+        {{- if not (regexMatch "^(old|injector|(java|nodejs|python|dotnet)(,(java|nodejs|python|dotnet))*)$" ($mode | replace " " "")) }}
+        {{- fail (printf "manager.instrumentationInjectionMode must be old, injector or a comma-separated list of java, nodejs, python, dotnet; got %q" .) }}
+        {{- end }}
+        {{- if ne $mode "old" }}
+        - {{ printf "--instrumentation-injection-mode=%s" ($mode | replace " " "") | quote }}
+        {{- end }}
+        {{- end }}
         command:
         - /manager
         name: manager

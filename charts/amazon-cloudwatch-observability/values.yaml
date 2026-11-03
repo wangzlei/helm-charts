@@ -1253,3 +1253,17 @@ otelContainerInsights:
         enabled: true
         ## Namespace where the Knative Serving components run.
         namespace: knative-serving
+
+## ══════════════════════════════════════════════════════════════════════════════
+## OTEL filters
+## ══════════════════════════════════════════════════════════════════════════════
+##
+## OTEL filters: include and exclude lists for the data that the chart's OTEL
+## pipelines collect. A change restarts the agent pods. See "OTEL filters" in
+## the chart README for details.
+otelFilters:
+  ## Namespaces to keep or drop. An entry is a name, a prefix ending in "*", or
+  ## "*". An empty include list keeps every namespace. Exclude wins over include.
+  namespaces:
+    include: []
+    exclude: []

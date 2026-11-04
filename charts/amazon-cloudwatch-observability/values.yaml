@@ -510,13 +510,10 @@ manager:
       repositoryDomain: public.ecr.aws/aws-observability
       repository: adot-autoinstrumentation-node
       tag: v0.13.0
-  # How Java, Node.js, Python and .NET are injected into Linux pods:
-  #   old      - language environment variables (JAVA_TOOL_OPTIONS, NODE_OPTIONS, PYTHONPATH, CORECLR_*), the default
-  #   injector - all four through the OpenTelemetry Injector (LD_PRELOAD), which carries the ADOT start-up guard:
-  #              when the SDK keeps a container from starting, its next start runs without the SDK
-  #   a comma-separated list of the languages that use the injector, e.g. "python" or "python,nodejs"
-  # The injector is used only with the default autoInstrumentationImage of a language; Windows pods and custom
-  # images keep the old injection.
+  # INTERNAL, for testing only; not part of the EKS add-on configuration and will be removed once the OpenTelemetry
+  # Injector is the only injection. How Java, Node.js, Python and .NET are injected into Linux pods: old (language
+  # environment variables, the default), injector (all four through the OpenTelemetry Injector via LD_PRELOAD, with
+  # the ADOT start-up guard), or a comma-separated list of the languages that use the injector, e.g. "python".
   instrumentationInjectionMode: old
   applicationSignals:
     autoMonitor:
@@ -527,6 +524,10 @@ manager:
         - dotnet
         - nodejs
       restartPods: false
+      # true: inject Java, Node.js, Python and .NET through the OpenTelemetry Injector with the ADOT start-up guard
+      # (a container the SDK keeps from starting runs its next start without the SDK). Applies to every pod the
+      # operator instruments, not only auto-monitored ones. false: today's injection.
+      instrumentationGuard: false
       exclude:
         java:
           namespaces: []

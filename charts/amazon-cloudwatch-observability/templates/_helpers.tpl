@@ -218,6 +218,9 @@ Helper function to modify auto-monitor config based on agent configurations
 */}}
 {{- define "manager.modify-auto-monitor-config" -}}
 {{- $autoMonitorConfig := deepCopy .Values.manager.applicationSignals.autoMonitor -}}
+{{- if and (hasKey $autoMonitorConfig "instrumentationGuard") (not (kindIs "invalid" $autoMonitorConfig.instrumentationGuard)) (not (kindIs "bool" $autoMonitorConfig.instrumentationGuard)) -}}
+{{- fail (printf "manager.applicationSignals.autoMonitor.instrumentationGuard must be true or false; got %q" ($autoMonitorConfig.instrumentationGuard | toString)) -}}
+{{- end -}}
 {{- $hasAppSignals := false -}}
 {{- range .Values.agents -}}
   {{- $agent := mergeOverwrite (deepCopy $.Values.agent) . -}}

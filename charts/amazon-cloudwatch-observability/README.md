@@ -157,21 +157,6 @@ The NVIDIA DCGM exporter runs on every NVIDIA GPU node when `dcgmExporter.enable
 the default. It collects 51 DCGM fields and the driver version label. The list is
 `$metricsConfig` in `templates/linux/dcgm-exporter-daemonset.yaml`.
 
-## Auto-instrumentation injection mode
-
-`manager.instrumentationInjectionMode` selects how the operator injects the Java, Node.js, Python and .NET SDKs
-into Linux pods:
-
-| Value | Injection |
-|---|---|
-| `old` (default) | Language environment variables (`JAVA_TOOL_OPTIONS`, `NODE_OPTIONS`, `PYTHONPATH`, `CORECLR_*`), as before |
-| `injector` | All four languages through the OpenTelemetry Injector (`LD_PRELOAD`), which carries the ADOT start-up guard: when the SDK keeps a container from starting, the container's next start runs without the SDK |
-| a list, e.g. `python` or `python,nodejs` | The listed languages through the Injector, the others as before |
-
-The Injector is used only with the default `manager.autoInstrumentationImage` of a language. Windows pods and
-custom images keep the old injection. A container opts out of the start-up guard (but keeps the Injector) with the
-environment variable `AWS_INSTRUMENTATION_GUARD_ENABLED=false`.
-
 ## Windows Support
 CloudWatch DaemonSet on Windows is officially supported only for containerd runtime.
 

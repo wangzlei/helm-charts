@@ -41,8 +41,9 @@ func TestDefault(t *testing.T) {
 	// Validate auto-monitor-config uses default values
 	// Default config has AppSignals enabled and us-west-2 is a supported region, so monitorAllServices should be true
 	expectedConfig := map[string]interface{}{
-		"monitorAllServices": true,
-		"languages":          []interface{}{"java", "python", "dotnet", "nodejs"},
+		"monitorAllServices":   true,
+		"languages":            []interface{}{"java", "python", "dotnet", "nodejs"},
+		"instrumentationGuard": false,
 	}
 	minikube.ValidateOperatorAutoMonitorConfig(t, expectedConfig)
 
